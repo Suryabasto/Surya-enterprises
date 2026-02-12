@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details | Surya Enterprises</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Montserrat', var(--font-family); background: var(--color-bg-secondary); }
+    .pdp-container { max-width: 900px; margin: 48px auto; background: var(--color-bg-card); border-radius: 16px; box-shadow: 0 2px 12px var(--color-shadow); padding: 32px; display: flex; gap: 40px; flex-wrap: wrap; }
+    .pdp-image { flex: 1 1 280px; display: flex; align-items: center; justify-content: center; }
+    .pdp-image img { max-width: 320px; border-radius: 12px; box-shadow: 0 4px 24px var(--color-shadow-lg); }
+    .pdp-info { flex: 2 1 340px; }
+    .pdp-title { font-size: 2em; font-weight: 700; color: var(--color-wonderland-purple); margin-bottom: 12px; }
+    .pdp-brand { display: inline-block; background: var(--color-wonderland-blue); color: #fff; border-radius: 8px; padding: 2px 10px; font-size: 0.95em; margin-bottom: 12px; margin-right: 8px; }
+    .pdp-price { font-size: 1.4em; font-weight: 700; color: var(--color-accent-primary); margin-bottom: 16px; }
+    .pdp-desc { color: var(--color-text-secondary); font-size: 1.1em; margin-bottom: 24px; }
+    .pdp-buy-btn { background: var(--color-wonderland-blue); color: #fff; border: none; border-radius: 20px; padding: 12px 32px; font-size: 1.1em; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .pdp-buy-btn:hover { background: var(--color-wonderland-purple); }
+    @media (max-width: 700px) { .pdp-container { flex-direction: column; gap: 24px; padding: 16px; } }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="Index.html" class="navbar-logo">Surya Enterprises</a>
+    <div class="navbar-links">
+      <a href="Index.html#products">Products</a>
+      <a href="Index.html#about">About</a>
+      <a href="Index.html#contact">Contact</a>
+    </div>
+    <div class="navbar-actions">
+      <button class="navbar-btn">Sign In</button>
+      <button class="navbar-btn">Cart</button>
+    </div>
+  </nav>
+  <main>
+    <div class="pdp-container" id="pdp-content">
+      <!-- Product details will be injected here by JS -->
+    </div>
+  </main>
+  <footer class="footer">
+    <div class="footer-bottom">
+      &copy; 2026 Surya Enterprises. All rights reserved.
+    </div>
+  </footer>
+  <script src="js/pdp.js"></script>
+</body>
+</html>

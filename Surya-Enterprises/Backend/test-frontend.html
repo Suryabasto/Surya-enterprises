@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-left: 4px solid #4CAF50;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .error {
+            border-left-color: #f44336;
+            background-color: #ffebee;
+        }
+        h1 {
+            color: #333;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .fail {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Backend Connection Test</h1>
+        <p><strong>Backend URL:</strong> http://localhost:5000</p>
+        
+        <div id="connectionStatus"></div>
+        
+        <h3>Test API Endpoints:</h3>
+        
+        <button onclick="testConnection()">1. Test Connection</button>
+        <button onclick="getAllProducts()">2. Get All Products</button>
+        <button onclick="createProduct()">3. Create Product</button>
+        <button onclick="createUser()">4. Create User</button>
+        <button onclick="createOrder()">5. Create Order</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        const resultDiv = document.getElementById('result');
+        const statusDiv = document.getElementById('connectionStatus');
+
+        function showResult(data, isError = false) {
+            resultDiv.className = 'result' + (isError ? ' error' : '');
+            resultDiv.textContent = JSON.stringify(data, null, 2);
+        }
+
+        function showStatus(message, isSuccess) {
+            statusDiv.className = 'status ' + (isSuccess ? 'success' : 'fail');
+            statusDiv.textContent = message;
+        }
+
+        async function testConnection() {
+            try {
+                const response = await fetch('http://localhost:5000/');
+                const data = await response.json();
+                showResult(data);
+                showStatus('✅ Backend is running and connected!', true);
+            } catch (error) {
+                showResult({ error: error.message }, true);
+                showStatus('❌ Cannot connect to backend. Is it running on port 5000?', false);
+            }
+        }
+
+        async function getAllProducts() {
+            try {
+                const response = await fetch(`${API_URL}/products`);
+                const data = await response.json();
+                showResult(data);
+                showStatus(`✅ Retrieved ${data.count || 0} products`, true);
+            } catch (error) {
+                showResult({ error: error.message }, true);
+                showStatus('❌ Failed to get products', false);
+            }
+        }
+
+        async function createProduct() {
+            try {
+                const product = {
+                    name: "Test Laptop",
+                    description: "High-performance laptop for testing",
+                    price: 999.99,
+                    category: "Electronics",
+                    stock: 25,
+                    imageUrl: "https://example.com/laptop.jpg"
+                };
+
+                const response = await fetch(`${API_URL}/products`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(product)
+                });
+
+                const data = await response.json();
+                showResult(data);
+                showStatus('✅ Product created successfully!', true);
+            } catch (error) {
+                showResult({ error: error.message }, true);
+                showStatus('❌ Failed to create product', false);
+            }
+        }
+
+        async function createUser() {
+            try {
+                const user = {
+                    name: "Test User",
+                    email: `test${Date.now()}@example.com`,
+                    password: "password123",
+                    phone: "1234567890",
+                    address: {
+                        street: "123 Test St",
+                        city: "Mumbai",
+                        state: "Maharashtra",
+                        zipCode: "400001",
+                        country: "India"
+                    }
+                };
+
+                const response = await fetch(`${API_URL}/users`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(user)
+                });
+
+                const data = await response.json();
+                showResult(data);
+                showStatus('✅ User created successfully!', true);
+            } catch (error) {
+                showResult({ error: error.message }, true);
+                showStatus('❌ Failed to create user', false);
+            }
+        }
+
+        async function createOrder() {
+            try {
+                // First, create a product and user for the order
+                const productResponse = await fetch(`${API_URL}/products`);
+                const productData = await productResponse.json();
+                
+                const userResponse = await fetch(`${API_URL}/users`);
+                const userData = await userResponse.json();
+
+                if (!productData.data || productData.data.length === 0) {
+                    alert('Please create a product first (click "Create Product")');
+                    return;
+                }
+
+                if (!userData.data || userData.data.length === 0) {
+                    alert('Please create a user first (click "Create User")');
+                    return;
+                }
+
+                const order = {
+                    user: userData.data[0]._id,
+                    items: [{
+                        product: productData.data[0]._id,
+                        quantity: 2,
+                        price: productData.data[0].price
+                    }],
+                    totalAmount: productData.data[0].price * 2,
+                    shippingAddress: {
+                        street: "123 Test St",
+                        city: "Mumbai",
+                        state: "Maharashtra",
+                        zipCode: "400001",
+                        country: "India"
+                    },
+                    paymentMethod: "credit_card"
+                };
+
+                const response = await fetch(`${API_URL}/orders`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(order)
+                });
+
+                const data = await response.json();
+                showResult(data);
+                showStatus('✅ Order created successfully!', true);
+            } catch (error) {
+                showResult({ error: error.message }, true);
+                showStatus('❌ Failed to create order', false);
+            }
+        }
+
+        // Auto-test connection on page load
+        window.onload = () => {
+            testConnection();
+        };
+    </script>
+</body>
+</html>
